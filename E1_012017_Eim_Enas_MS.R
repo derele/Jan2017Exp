@@ -570,11 +570,10 @@ names(RTqPCR)[names(RTqPCR) == "Target"] <- "Gene"
 =======
 names(RTqPCR)[names(RTqPCR) == "Sample"] <- "EH_ID"
 RTqPCR[RTqPCR=="IFN-y"] <- "IFN-g"
-# just averages and add SD
+
+# not sure why this is here
 RTqPCR.raw <- RTqPCR
-RTqPCR <- data.frame(RTqPCR %>% group_by(Target, EH_ID, Content) %>% 
-                       summarize(SD = sd(Cq.Mean),
-                                 Cq.Mean = mean(Cq.Mean)))
+
 #convert columns to char + remove multiple classses
 RTqPCRcharacters <- sapply(RTqPCR, is.factor)
 RTqPCR[RTqPCRcharacters] <- lapply(RTqPCR[RTqPCRcharacters], as.character)
@@ -638,6 +637,23 @@ CE.final <- merge(CE.long, stab, all.y=TRUE)
 
 CE.final$dpi <- as.numeric(gsub("dpi|dip", "", CE.final$dpi.diss))
 
+#-------------------add and process QA tables-----------------  
+# load in tables
+melt.curvesurl <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/faulty_meting_curves.csv"
+melt.curves <- read.csv(text = getURL(melt.curvesurl), sep = ",", stringsAsFactors=FALSE)
+
+amp.curvesurl <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/faulty_amplification_curves.csv"
+amp.curves <- read.csv(text = getURL(amp.curvesurl), sep = ",", stringsAsFactors=FALSE)
+
+#identify rows in common, giving ultimately bad amplicons
+common <- intersect(amp.curves$EH_ID, melt.curves$EH_ID)  
+melt.curves[common,] # give you common rows in data frame 1  
+amp.curves[common,] # give you common rows in data frame 2
+melt.curves$EH_ID <- sub("^", "LM00", melt.curves$EH_ID )
+amp.curves$EH_ID <- sub("^", "LM00", amp.curves$EH_ID )
+remove <- amp.curves[common,]
+CE.final <- CE.final[ !(CE.final$EH_ID %in% remove$EH_ID), ]
+
 pdf("figures/CytokinesCE.pdf", width=12, height=4)
 ggplot(CE.final, aes(dpi, NE, color=inf.strain)) +
 =======
@@ -658,29 +674,12 @@ names(CE)[names(CE) == "InfectionStrain"] <- "inf.strain"
 ## wide dateset for merging in overall table (messy, fix)
 CE.wide <- reshape(CE.wide, timevar = "Gene", idvar = "EH_ID", direction = "wide")
 CE$dpi <- as.numeric(gsub("dpi|dip", "", CE$dpi.diss))
-#--------------------------------------------------------------------------------------------------------
-# a) for each sample average the ct values of the 3 ref genes --> ct[ref] = mean( ct[ref1], ct[ref[2], ct[ref3] )
-# b) for each sample, calculate the dct as the difference dct = ct[ref] - ct[goi]
-# c) you should now have six dct values, three for each of your two groups (healthy and diseased). 
-# You can calculate the ddct as mean(dct[diseased]) - mean(dct[healthy]), you can use a t-test, etc.
-# e.g.: cq.ref <- mean(x = c(CDC42, PPIA, PPIB)) 
-# ------------------------------------------------
-# make baseline (per sample, fix below) 
-# CE.baseline <- aggregate( NE ~ Gene, CE, mean)
-# CE.baseline <- CE.baseline[c(1,8,9), 2]
-# CE.baseline <- mean(CE.baseline)
-# #subtract baseline from att Cq.Means
-# CE$CCq <- lapply(CE$NE, FUN = function(x) x-CE.baseline)
-# #fix list messing with ggplot
-# CE$CCq <- unlist(CE$CCq)
-# #remove Pos Ctr and Neg Ctr from graph
-# CE <- subset(CE, Content  == c("Cecum"))
-#-----------------------------------------------------
+
 
 pdf("figures/Cytokines.pdf", width=12, height=4)
 
-ggplot(subset(CE, nchar(CE$Gene)>2), aes(dpi, CCq, color=inf.strain)) +
->>>>>>> c12d35e90dd4b1a0a3de94debe9ba9ff45194cb8
+ggplot(subset(CE.final, nchar(CE.final$Gene)>2), aes(dpi, NE, color=inf.strain)) +
+# >>>>>>> c12d35e90dd4b1a0a3de94debe9ba9ff45194cb8
   geom_jitter(width=0.2) +
   geom_smooth(se=FALSE) +
   scale_x_continuous(breaks=c(3, 5, 7, 9, 11),
