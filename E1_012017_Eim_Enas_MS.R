@@ -1,7 +1,6 @@
 library(ggplot2)
 library(lme4)
 library(devtools)
-devtools::install_github("strengejacke/strengejacke")
 library(strangejacke)
 library(sjPlot)
 library(plyr)
@@ -419,7 +418,6 @@ TGFb.S <- read.csv(text = getURL(TGFb.Surl), sep = ",")
 TNFa.Surl <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_TNFa.csv"
 TNFa.S <- read.csv(text = getURL(TNFa.Surl), sep = ",")
 
-<<<<<<< HEAD
 GeMeans.l <- list(CXCL9.S, IL10.S, IL12.S, IL6.S, IFNg.S, STAT6.S, TGFb.S, TNFa.S)
 
 GeMeans.l <- lapply(GeMeans.l, function (data) {
@@ -478,8 +476,8 @@ summary(modIL12)
 modIL6 <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL6"))
 summary(modIL6)
 
-modINFG <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"INFG"))
-summary(modINFG)
+modIFNG <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"INFG"))
+summary(modIFNG)
 
 modSTAT6 <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"STAT6"))
 summary(modSTAT6)
@@ -491,10 +489,10 @@ modTNFA <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"TN
 summary(modTNFA)
 
 tab_model(modCXCL9, modIL10, modIL12, modIL6,
-          modINFG, modSTAT6, modTGFB, 
-          file="table_VS_Eflab(itercept).html",
+          modIFNG, modSTAT6, modTGFB, 
+          file="SPtable_VS_Eflab(itercept).html",
           dv.labels=c("CXCL9", "IL10", "IL12", "IL6",
-                      "INFG", "STAT6", "TGFB"))
+                      "IFNG", "STAT6", "TGFB"))
 
 ## Now contrasting against negative control
 
@@ -512,8 +510,8 @@ summary(modIL12)
 modIL6 <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL6"))
 summary(modIL6)
 
-modINFG <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"INFG"))
-summary(modINFG)
+modIFNG <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"INFG"))
+summary(modIFNG)
 
 modSTAT6 <- lmer(NE~inf.strain  +(1|dpi.diss), data=subset(M, M$Gene%in%"STAT6"))
 summary(modSTAT6)
@@ -525,10 +523,10 @@ modTNFA <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"TNFA"))
 summary(modTNFA)
 
 tab_model(modCXCL9, modIL10, modIL12, modIL6,
-          modINFG, modSTAT6, modTGFB,
-          file="table_VS_non_infected(itercept).html",
+          modIFNG, modSTAT6, modTGFB,
+          file="SPtable_VS_non_infected(itercept).html",
           dv.labels=c("CXCL9", "IL10", "IL12", "IL6",
-                      "INFG", "STAT6", "TGFB"))
+                      "IFNG", "STAT6", "TGFB"))
 
 # ------------------------- Gene expression data (caecum)---------------------------
 RTqPCRurl <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv"
@@ -679,8 +677,8 @@ modIL12.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.f
 modIL6.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-6"))
 summary(modIL6)
 
-modINFG.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IFN-G"))
-summary(modINFG)
+modIFNG.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IFN-G"))
+summary(modIFNG)
 
 modSTAT6.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"STAT6"))
 summary(modSTAT6)
@@ -689,10 +687,10 @@ modTGFB.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.f
 summary(modTGFB)
 
 tab_model(modCXCL9.c, modIL10.c, modIL12.c, modIL6.c,
-          modINFG.c, modSTAT6.c, modTGFB.c, 
+          modIFNG.c, modSTAT6.c, modTGFB.c, 
           file="CEtable_VS_Eflab(itercept).html",
           dv.labels=c("CXCL9", "IL10", "IL12", "IL6",
-                      "INFG", "STAT6", "TGFB"))
+                      "IFNG", "STAT6", "TGFB"))
 
 ## Now contrasting against negative control
 # l3v3l setting introduces only NAs
@@ -710,8 +708,8 @@ summary(modIL12.c)
 modIL6.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-6"))
 summary(modIL6.c)
 
-modINFG.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IFN-G"))
-summary(modINFG.c)
+modIFNG.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IFN-G"))
+summary(modIFNG.c)
 
 modSTAT6.c <- lmer(NE~inf.strain  +(1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"STAT6"))
 summary(modSTAT6)
@@ -720,10 +718,10 @@ modTGFB.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$G
 summary(modTGFB.c)
 
 tab_model(modCXCL9, modIL10, modIL12, modIL6,
-          modINFG, modSTAT6, modTGFB,
+          modIFNG, modSTAT6, modTGFB,
           file="CEtable_VS_non_infected(itercept).html",
           dv.labels=c("CXCL9", "IL10", "IL12", "IL6",
-                      "INFG", "STAT6", "TGFB"))
+                      "IFNG", "STAT6", "TGFB"))
 
 
 ##
