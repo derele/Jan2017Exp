@@ -1,6 +1,8 @@
 library(ggplot2)
 library(lme4)
-library(strengejacke)
+library(devtools)
+devtools::install_github("strengejacke/strengejacke")
+library(strangejacke)
 library(sjPlot)
 library(plyr)
 library(coin)
@@ -250,8 +252,7 @@ oocysts.plot <- ggplot(o.means,
   theme_bw()
 
 pdf("figures/Figure1.pdf", width=6, height=6, onefile=FALSE)
-#for Luke's Deb laptop
-#pdf("./Documents//E1_MS/Figure1.pdf", width=6, height=6, onefile=FALSE)
+
 ggarrange(weight.plot, oocysts.plot, nrow=2, common.legend = TRUE,
           legend="right")
 dev.off()
@@ -284,10 +285,9 @@ lesionVSqPCR.plot <- ggplot() +
   theme_bw() +
   coord_flip() 
 
-
+# error: Error in pdf("figures/Figure3.pdf", width = 5, height = 8, onefile = FALSE) : cannot open file 'figures/Figure3.pdf'
 pdf("figures/Figure3.pdf", width=5, height=8, onefile=FALSE)
-#again for Luke Debian
-#pdf("./Documents//E1_MS/Figure3.pdf")
+
 ggarrange(qPCR.plot, lesionVSqPCR.plot , nrow=2, common.legend = FALSE,
           legend="right")
 dev.off()
@@ -434,31 +434,7 @@ GeMeans$Sample <- toupper(GeMeans$Sample)
 ## removing an empty row
 GeMeans <- GeMeans[!GeMeans$Gene%in%"",]
 GeMeans$Gene <- toupper(GeMeans$Gene)
-=======
-#---------------------------------------------- THIS NEEDS FIXING------------------------------
 
-GE.files <- list.files(path = "Jan2017Exp/", pattern="^GE_")
- IL10.S <- IL10.S[-c(115:117), ]
- GE.files <- as.data.frame(row.names = NULL, x =  c(TNFa.S, TGFb.S, STAT6.S, IFNg.S, IL6.S, IL12.S, IL10.S, CXCL9.S))
- GE.files <- data.frame(GE.files)
-#luke Deb :
-#setwd(dir = "~/Documents/Jan2017Exp/")
- 
- GeMeans.l <- lapply(GE.files, function (file) {
-    data <- as.data.frame(GE.files)
-    data <- data[seq(1, nrow(Rtissue), by=2), c("Sample", "Gene", "NE")]
-    data[!is.na(data$Gene), ]
-  })
- 
- GeMeans <- Reduce(rbind, GeMeans.l)
- GeMeans$Sample <- toupper(GeMeans$Sample)
- ### Correction
- ## removing an empty row
- GeMeans <- GeMeans[!GeMeans$Gene%in%"",]
- GeMeans$Gene <- toupper(GeMeans$Gene)
-# -----------------------------------------------------------------------------------------------
-
->>>>>>> c12d35e90dd4b1a0a3de94debe9ba9ff45194cb8
 ## standard naming
 names(GeMeans)[names(GeMeans)%in%"Sample"] <- "EH_ID"
 ## check uniqueness for genes / samples
@@ -469,13 +445,15 @@ nrow(unique(GeMeans[, c("EH_ID", "Gene")])) ==  nrow(GeMeans)
 ## wide dateset for merging in overall table
 GeMeans.wide <- reshape(GeMeans, timevar = "Gene", idvar = "EH_ID", direction = "wide")
 
-
 M <- merge(GeMeans, stab, all=TRUE)
 M$dpi <- as.numeric(gsub("dpi|dip", "", M$dpi.diss))
 
 M.wide <- merge(GeMeans.wide, stab, all=TRUE)
 
+# same error as before pdfs
 pdf("figures/Cytokines.pdf", width=12, height=4)
+
+#is this supposed to plot out only TNF?
 ggplot(subset(M, nchar(M$Gene)>2), aes(dpi, NE, color=inf.strain)) +
   geom_jitter(width=0.2) +
   geom_smooth(se=FALSE) +
@@ -556,7 +534,6 @@ tab_model(modCXCL9, modIL10, modIL12, modIL6,
 RTqPCRurl <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv"
 RTqPCR.raw <- read.csv(text = getURL(RTqPCRurl), sep = ",", stringsAsFactors=FALSE)
 #change colnames and misnamed rows to match standard
-<<<<<<< HEAD
 names(RTqPCR.raw)[names(RTqPCR.raw) == "Sample"] <- "EH_ID"
 RTqPCR.raw[RTqPCR.raw=="IFN-y"] <- "IFN-g"
 
@@ -567,7 +544,6 @@ RTqPCR <- data.frame(RTqPCR.raw %>% group_by(Target, EH_ID) %>%
 RTqPCR <- as.data.frame(RTqPCR)
 
 names(RTqPCR)[names(RTqPCR) == "Target"] <- "Gene"
-=======
 names(RTqPCR)[names(RTqPCR) == "Sample"] <- "EH_ID"
 RTqPCR[RTqPCR=="IFN-y"] <- "IFN-g"
 
@@ -584,12 +560,10 @@ RTqPCR = as.data.frame(RTqPCR)
 #standardize names
 names(RTqPCR)[names(RTqPCR) == "Target"] <- "Gene"
 names(RTqPCR)[names(RTqPCR) == "Cq.Mean"] <- "NE"
->>>>>>> c12d35e90dd4b1a0a3de94debe9ba9ff45194cb8
+
 RTqPCR$Gene <- toupper(RTqPCR$Gene)
 
 RTqPCR[RTqPCR=="PPIP"] <- "PPIB"
-
-<<<<<<< HEAD
 
 ## wide dateset for merging in overall table
 ## ignore SD for a moment
@@ -654,9 +628,11 @@ amp.curves$EH_ID <- sub("^", "LM00", amp.curves$EH_ID )
 remove <- amp.curves[common,]
 CE.final <- CE.final[ !(CE.final$EH_ID %in% remove$EH_ID), ]
 
+#same as other pdfs
 pdf("figures/CytokinesCE.pdf", width=12, height=4)
-ggplot(CE.final, aes(dpi, NE, color=inf.strain)) +
-=======
+#finish this ggplot
+# ggplot(CE.final, aes(dpi, NE, color=inf.strain)) +
+
 #------------------add and process design table---------------------------------------------------------
 InfectionURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/E1_012017_Eim_Experiment_Table_raw_NMRI.csv"
 Infection.design <- read.csv(text = getURL(InfectionURL))
@@ -695,7 +671,6 @@ dev.off()
 modCXCL9.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"CXCL9"))
 summary(modCXCL9.c)
 
-<<<<<<< HEAD
 modIL10.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-10"))
 summary(modIL10)
 
@@ -718,31 +693,6 @@ tab_model(modCXCL9.c, modIL10.c, modIL12.c, modIL6.c,
           file="CEtable_VS_Eflab(itercept).html",
           dv.labels=c("CXCL9", "IL10", "IL12", "IL6",
                       "INFG", "STAT6", "TGFB"))
-=======
-modIL10.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE, CE$Gene%in%"IL-10"))
-summary(modIL10.c)
-
-modIL12.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE, CE$Gene%in%"IL-12"))
-summary(modIL12.c)
-
-modIL6.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE, CE$Gene%in%"IL-6"))
-summary(modIL6.c)
-
-modIFNG.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE, CE$Gene%in%"IFN-G"))
-summary(modIFNG.c)
-
-modSTAT6.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE, CE$Gene%in%"STAT6"))
-summary(modSTAT6.c)
-
-modTGFB.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE, CE$Gene%in%"TGF-B"))
-summary(modTGFB.c)
-
-tab_model(modCXCL9.c, modIL10.c, modIL12.c, modIL6.c,
-          modIFNG.c, modSTAT6.c, modTGFB.c, 
-          file="table_VS_Eflab(itercept).html",
-          dv.labels=c("CXCL9", "IL-10", "IL-12", "IL-6",
-                      "INF-G", "STAT6", "TGF-B"))
->>>>>>> c12d35e90dd4b1a0a3de94debe9ba9ff45194cb8
 
 ## Now contrasting against negative control
 # l3v3l setting introduces only NAs
