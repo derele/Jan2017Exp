@@ -498,32 +498,32 @@ tab_model(modCXCL9, modIL10, modIL12, modIL6,
 
 M$inf.strain = factor(M$inf.strain, levels(M$inf.strain)[c(4,1:3)])
 
-modCXCL9 <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"CXCL9"))
-summary(modCXCL9)
+modCXCL9.s <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"CXCL9"))
+summary(modCXCL9.s)
 
-modIL10 <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL10"))
-summary(modIL10)
+modIL10.s <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL10"))
+summary(modIL10.s)
 
-modIL12 <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL12"))
-summary(modIL12)
+modIL12.s <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL12"))
+summary(modIL12.s)
 
-modIL6 <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL6"))
-summary(modIL6)
+modIL6.s <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL6"))
+summary(modIL6.s)
 
-modIFNG <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"INFG"))
-summary(modIFNG)
+modIFNG.s <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"INFG"))
+summary(modIFNG.s)
 
-modSTAT6 <- lmer(NE~inf.strain  +(1|dpi.diss), data=subset(M, M$Gene%in%"STAT6"))
-summary(modSTAT6)
+modSTAT6.s <- lmer(NE~inf.strain  +(1|dpi.diss), data=subset(M, M$Gene%in%"STAT6"))
+summary(modSTAT6.s)
 
-modTGFB <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"TGFB"))
-summary(modTGFB)
+modTGFB.s <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"TGFB"))
+summary(modTGFB.s)
 
-modTNFA <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"TNFA"))
-summary(modTNFA)
+modTNFA.s <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"TNFA"))
+summary(modTNFA.s)
 
-tab_model(modCXCL9, modIL10, modIL12, modIL6,
-          modIFNG, modSTAT6, modTGFB,
+tab_model(modCXCL9.s, modIL10.s, modIL12.s, modIL6.s,
+          modIFNG.s, modSTAT6.s, modTGFB.s,
           file="SPtable_VS_non_infected(itercept).html",
           dv.labels=c("CXCL9", "IL10", "IL12", "IL6",
                       "IFNG", "STAT6", "TGFB"))
@@ -673,18 +673,19 @@ modIL10.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.f
 summary(modIL10)
 
 modIL12.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-12"))
+summary(modIL6.c)
 
 modIL6.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-6"))
-summary(modIL6)
+summary(modIL6.c)
 
 modIFNG.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IFN-G"))
-summary(modIFNG)
+summary(modIFNG.c)
 
 modSTAT6.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"STAT6"))
-summary(modSTAT6)
+summary(modSTAT6.c)
 
 modTGFB.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"TGF-B"))
-summary(modTGFB)
+summary(modTGFB.c)
 
 tab_model(modCXCL9.c, modIL10.c, modIL12.c, modIL6.c,
           modIFNG.c, modSTAT6.c, modTGFB.c, 
@@ -694,31 +695,31 @@ tab_model(modCXCL9.c, modIL10.c, modIL12.c, modIL6.c,
 
 ## Now contrasting against negative control
 # l3v3l setting introduces only NAs
-#CE.final$inf.strain = factor(CE.final$inf.strain, levels(CE$inf.strain)[c(4,1:3)])
+CE.final$inf.strain = factor(CE.final$inf.strain, levels(CE.final$inf.strain)[c(4,1:3)])
 
-modCXCL9.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"CXCL9"))
-summary(modCXCL9.c)
+modCXCL9.cu <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"CXCL9"))
+summary(modCXCL9.cu)
 
-modIL10.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-10"))
-summary(modIL10.c)
+modIL10.cu <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-10"))
+summary(modIL10.cu)
 
-modIL12.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-12"))
-summary(modIL12.c)
+modIL12.cu <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-12"))
+summary(modIL12.cu)
 
-modIL6.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-6"))
-summary(modIL6.c)
+modIL6.cu <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-6"))
+summary(modIL6.cu)
 
-modIFNG.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IFN-G"))
-summary(modIFNG.c)
+modIFNG.cu <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IFN-G"))
+summary(modIFNG.cu)
 
-modSTAT6.c <- lmer(NE~inf.strain  +(1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"STAT6"))
-summary(modSTAT6)
+modSTAT6.cu <- lmer(NE~inf.strain  +(1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"STAT6"))
+summary(modSTAT6.cu)
 
-modTGFB.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"TGF-B"))
-summary(modTGFB.c)
+modTGFB.cu <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"TGF-B"))
+summary(modTGFB.cu)
 
-tab_model(modCXCL9, modIL10, modIL12, modIL6,
-          modIFNG, modSTAT6, modTGFB,
+tab_model(modCXCL9.cu, modIL10.cu, modIL12.cu, modIL6.cu,
+          modIFNG.cu, modSTAT6.cu, modTGFB.cu,
           file="CEtable_VS_non_infected(itercept).html",
           dv.labels=c("CXCL9", "IL10", "IL12", "IL6",
                       "IFNG", "STAT6", "TGFB"))
