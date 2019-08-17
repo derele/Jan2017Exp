@@ -14,6 +14,7 @@ library(Rmisc)
 library(sjPlot)
 library(devtools)
 library(dplyr)
+library(reshape)
 
 #### ### get the data --------------------------------------------
 
@@ -445,19 +446,29 @@ GeMeans.wide <- reshape(GeMeans, timevar = "Gene", idvar = "EH_ID", direction = 
 
 M <- merge(GeMeans, stab, all=TRUE)
 M$dpi <- as.numeric(gsub("dpi|dip", "", M$dpi.diss))
+M$Gene <- as.character(M$Gene)
+M$Gene[M$Gene == "IL6"] <- "IL-6"
+M$Gene[M$Gene == "IL10"] <- "IL-10"
+M$Gene[M$Gene == "IL12"] <- "IL-12"
+M$Gene[M$Gene == "IFNG"] <- "IFN-G"
+M$Gene[M$Gene == "INFG"] <- "IFN-G"
+M$Gene[M$Gene == "TGFB"] <- "TGF-B"
 
 M.wide <- merge(GeMeans.wide, stab, all=TRUE)
 
 # same error as before pdfs
 pdf("figures/Cytokines.pdf", width=12, height=4)
 
-#is this supposed to plot out only TNF?
-ggplot(subset(M, nchar(M$Gene)>2), aes(dpi, NE, color=inf.strain)) +
+# add genes as factors to order
+M$Gene_f = factor(M$Gene, levels=c('CXCL9','IL-6','IL-10','IL-12', "IFN-G", "TGF-B", "STAT6"))
+
+# plot Spleen
+CytokinesSP <- ggplot(subset(M, nchar(M$Gene)>2), aes(dpi, NE, color=inf.strain)) +
   geom_jitter(width=0.2) +
   geom_smooth(se=FALSE) +
   scale_x_continuous(breaks=c(3, 5, 7, 9, 11),
                      labels=c("3dpi", "5dpi", "7dip", "9dpi", "11dpi")) +
-  facet_wrap(~Gene, scales="free_y", nrow=2)+
+  facet_wrap(~Gene_f, scales="free_y", nrow=2)+
   scale_colour_brewer("infection\nisolate", palette = "Dark2") +
   scale_y_continuous("normalized mRNA expression")+
   theme_bw()
@@ -649,19 +660,23 @@ names(CE)[names(CE) == "InfectionStrain"] <- "inf.strain"
 CE.wide <- reshape(CE.wide, timevar = "Gene", idvar = "EH_ID", direction = "wide")
 CE$dpi <- as.numeric(gsub("dpi|dip", "", CE$dpi.diss))
 
+# add genes as factors to order
+CE.final$Gene_f = factor(CE.final$Gene, levels=c('CXCL9','IL-6','IL-10','IL-12', "IFN-G", "TGF-B", "STAT6"))
 
 pdf("figures/Cytokines.pdf", width=12, height=4)
 
-ggplot(subset(CE.final, nchar(CE.final$Gene)>2), aes(dpi, NE, color=inf.strain)) +
-# >>>>>>> c12d35e90dd4b1a0a3de94debe9ba9ff45194cb8
+CytokinesCE <- ggplot(subset(CE.final, nchar(CE.final$Gene)>2), aes(dpi, NE, color=inf.strain)) +
   geom_jitter(width=0.2) +
   geom_smooth(se=FALSE) +
   scale_x_continuous(breaks=c(3, 5, 7, 9, 11),
                      labels=c("3dpi", "5dpi", "7dip", "9dpi", "11dpi")) +
-  facet_wrap(~Gene, scales="free_y", nrow=2)+
+  facet_wrap(~Gene_f, scales="free_y", nrow=2)+
   scale_colour_brewer("infection\nisolate", palette = "Dark2") +
   scale_y_continuous("normalized mRNA expression")+
   theme_bw()
+
+Cytokines <- ggarrange(CytokinesSP, CytokinesCE, nrow=2, common.legend = TRUE,
+          legend="right")
 dev.off()
 
 #----------------------------------extract to same format as Emanuel's
@@ -772,7 +787,6 @@ diffthis <- merge(stab, diffthis, by.x="EH_ID", by.y=0)
 
 diffthis$EH_ID <- as.factor(as.character(diffthis$EH_ID))
 
-library(reshape)
 difflong <- melt(diffthis)
 
 pdf("figures/peaks.pdf", width=8, height=4)
