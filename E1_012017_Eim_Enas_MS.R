@@ -670,13 +670,13 @@ CytokinesCE <- ggplot(subset(CE.final, nchar(CE.final$Gene)>2), aes(dpi, NE, col
   geom_smooth(se=FALSE) +
   scale_x_continuous(breaks=c(3, 5, 7, 9, 11),
                      labels=c("3dpi", "5dpi", "7dip", "9dpi", "11dpi")) +
-  facet_wrap(~Gene_f, scales="free_y", nrow=2)+
+  facet_wrap(~Gene_f, scales="free_y", nrow=2) +
   scale_colour_brewer("infection\nisolate", palette = "Dark2") +
-  scale_y_continuous("normalized mRNA expression")+
+  scale_y_continuous("normalized mRNA expression") +
   theme_bw()
 
 Cytokines <- ggarrange(CytokinesSP, CytokinesCE, nrow=2, common.legend = TRUE,
-          legend="right")
+          legend="right", labels = "AUTO")
 dev.off()
 
 #----------------------------------extract to same format as Emanuel's
@@ -685,7 +685,7 @@ modCXCL9.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.
 summary(modCXCL9.c)
 
 modIL10.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-10"))
-summary(modIL10)
+summary(modIL10.c)
 
 modIL12.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-12"))
 summary(modIL6.c)
