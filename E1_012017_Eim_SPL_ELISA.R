@@ -36,22 +36,22 @@ E2_std <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Jan20
 E2_samples <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Jan2017Exp/master/E1_012017_Eim_SPL_ELISA2_samples.csv"))
 
 model2<-drm(OD~Conc,
-            fct=LL.4(naSPL=c("Slope", "Lower", "Upper", "ED50")),
+            fct=LL.4(names =c("Slope", "Lower", "Upper", "ED50")),
             data=E2_std)
 plot(model2)
 
 E2<-ED(model2, E2_samples$OD, type="absolute", display=F)
-row.naSPL(E2) <- E2_samples$Sample
+row.names(E2) <- E2_samples$Sample
 
 points(y=E2_samples$OD,x=E2[,1],col="lightblue",pch=19,cex=2)
 text(y =E2_samples$OD, x = E2[,1], labels=E2_samples$Sample, data=E2, cex=0.9, font=2)
 
 E2 <- data.frame(E2)
-colnaSPL(E2)[1] <- "IFNy_CEWE"
-E2 <- dplyr::select(E2, IFNy_CEWE)
-setDT(E2, keep.rownaSPL = TRUE)[]
-colnaSPL(E2)[1] <- "EH_ID"
-colnaSPL(E2_samples)[1] <- "EH_ID"
+colnames(E2)[1] <- "IFNy_SPL"
+E2 <- dplyr::select(E2, IFNy_SPL)
+setDT(E2, keep.rownames = TRUE)[]
+colnames(E2)[1] <- "EH_ID"
+colnames(E2_samples)[1] <- "EH_ID"
 E2 <- merge(E2, E2_samples)
 E2$OD <- NULL
 
@@ -60,3 +60,4 @@ E1$X <- NULL
 E <- rbind(E1, E2)
 
 write.csv(E, "./Jan2017Exp/E1_012017_Eim_SPL_ELISA.csv")
+write.csv(E, "../Jan2017Exp/E1_012017_Eim_SPL_ELISA.csv")
