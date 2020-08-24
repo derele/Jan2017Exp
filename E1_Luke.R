@@ -2,7 +2,9 @@ library(httr)
 library(RCurl)
 library(Rmisc)
 library(tidyr)
-
+library(lme4)
+library(ggplot2)
+library(lmerTest)
 #### ### get the data --------------------------------------------
 
 ## for control: general experimental setup -------------------
@@ -165,8 +167,14 @@ all.data$dpi.diss <- factor(all.data$dpi.diss, levels = c("3dpi", "5dpi", "7dpi"
 # test strain effect on IFNy CEWE and MES
 IFNy.MES <- dplyr::select(all.data, EH_ID, dpi.diss, inf.strain, IFNy_MES)
 IFNy.MES <- dplyr::distinct(IFNy.MES)
-modIFNyMES <- lme4::lmer(IFNy_MES~inf.strain + (1|dpi.diss), data = IFNy.MES)
+IFNy.MES <- na.omit(IFNy.MES)
+modIFNyMES <- lmer(IFNy_MES~inf.strain + (1|dpi.diss), data = IFNy.MES)
 summary(modIFNyMES)
+VarCorr(modIFNyMES)
+
+ggplot(fortify(modIFNyMES), aes(dpi.diss, IFNy_MES, color = inf.strain, group = inf.strain)) +
+  stat_summary(fun.data=mean_se, geom="pointrange") +
+  stat_summary(aes(y=.fitted), fun=mean, geom="line")
 
 # graph
 ggplot(data = all.data, aes(x = dpi.diss, y = IFNy_SPL, color = inf.strain, group = inf.strain)) + 
