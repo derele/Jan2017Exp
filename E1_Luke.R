@@ -162,6 +162,11 @@ all.data <- merge(all.data, hist, all=TRUE)
 #order factors
 all.data$dpi.diss <- factor(all.data$dpi.diss, levels = c("3dpi", "5dpi", "7dpi", "9dpi", "11dpi"))
 
+# test strain effect on IFNy CEWE and MES
+IFNy.MES <- dplyr::select(all.data, EH_ID, dpi.diss, inf.strain, IFNy_MES)
+IFNy.MES <- dplyr::distinct(IFNy.MES)
+modIFNyMES <- lme4::lmer(IFNy_MES~inf.strain + (1|dpi.diss), data = IFNy.MES)
+summary(modIFNyMES)
 
 # graph
 ggplot(data = all.data, aes(x = dpi.diss, y = IFNy_SPL, color = inf.strain, group = inf.strain)) + 
