@@ -175,35 +175,24 @@ VarCorr(modIFNyMES)
 ggplot(fortify(modIFNyMES), aes(dpi.diss, IFNy_MES, color = inf.strain, group = inf.strain)) +
   stat_summary(fun.data=mean_se, geom="pointrange") +
   stat_summary(aes(y=.fitted), fun=mean, geom="line")
+# only Uninfected shows any effect (no strain difference)
 
-# graph
-ggplot(data = all.data, aes(x = dpi.diss, y = IFNy_SPL, color = inf.strain, group = inf.strain)) + 
-  geom_jitter(width = 0.2) +
-  geom_smooth(se = F) +
-  facet_grid(~inf.strain)
+# test strain effect on IFNy CEWE and SPL
+IFNy.SPL <- dplyr::select(all.data, EH_ID, dpi.diss, inf.strain, IFNy_SPL)
+IFNy.SPL <- dplyr::distinct(IFNy.SPL)
+IFNy.SPL <- na.omit(IFNy.SPL)
+modIFNySPL <- lmer(IFNy_SPL~inf.strain + (1|dpi.diss), data = IFNy.SPL)
+summary(modIFNySPL)
+VarCorr(modIFNySPL)
 
-ggplot(data = all.data, aes(x = dpi.diss, y = IFNy_MES, color = inf.strain, group = dpi.diss & inf.strain)) + 
-  geom_jitter(width=0.2) +
-  geom_smooth(se = F) +
-  facet_grid(~inf.strain)
 
-# seems that spleen is not responsing to infection strain, MES better so let's explore that
-# delta vs IFNy in MES 
-ggplot(data = all.data, aes(x = PH.delta, y = IFNy_MES, color = inf.strain)) + 
-  geom_jitter(width=0.2) +
-  geom_smooth(se = F) +
-  facet_grid(~inf.strain)
-# oocyst counts vs IFNy in MES
-ggplot(data = all.data, aes(x = Total.oocysts.g, y = IFNy_MES, color = inf.strain)) + 
-  geom_jitter(width=0.2) +
-  facet_grid(~inf.strain)
-# that's some odd missing values
+ggplot(fortify(modIFNySPL), aes(dpi.diss, IFNy_SPL, color = inf.strain, group = inf.strain)) +
+  stat_summary(fun.data=mean_se, geom="pointrange") +
+  stat_summary(aes(y=.fitted), fun=mean, geom="line")
+# no differences
 
-# weight vs IFNy MES
-ggplot(data = all.data, aes(x = perc_of_dpi1, y = IFNy_MES, color = inf.strain)) + 
-  geom_jitter(width=0.2) +
-  facet_grid(~inf.strain)
+# sum of oocysts from dpi 4-9 vs IFN
+oocysts <- dplyr::select(all.data, EH_ID, Total.oocysts.g, dpi_count, dpi.diss, IFNy_MES, IFNy_SPL)
 
-# 
-DT <- subset(all.data, all.data$Total.oocysts.g > 0 )
+
 
