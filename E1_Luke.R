@@ -5,6 +5,8 @@ library(tidyr)
 library(lme4)
 library(ggplot2)
 library(lmerTest)
+library(modelr)
+
 #### ### get the data --------------------------------------------
 
 ## for control: general experimental setup -------------------
@@ -171,6 +173,9 @@ IFNy.MES <- na.omit(IFNy.MES)
 modIFNyMES <- lmer(IFNy_MES~inf.strain + (1|dpi.diss), data = IFNy.MES)
 summary(modIFNyMES)
 VarCorr(modIFNyMES)
+MESgrid <- IFNy.MES %>% data_grid(inf.strain)
+MESgrid <- MESgrid %>% 
+  add_predictions(modIFNyMES) 
 
 ggplot(fortify(modIFNyMES), aes(dpi.diss, IFNy_MES, color = inf.strain, group = inf.strain)) +
   stat_summary(fun.data=mean_se, geom="pointrange") +
@@ -184,7 +189,6 @@ IFNy.SPL <- na.omit(IFNy.SPL)
 modIFNySPL <- lmer(IFNy_SPL~inf.strain + (1|dpi.diss), data = IFNy.SPL)
 summary(modIFNySPL)
 VarCorr(modIFNySPL)
-
 
 ggplot(fortify(modIFNySPL), aes(dpi.diss, IFNy_SPL, color = inf.strain, group = inf.strain)) +
   stat_summary(fun.data=mean_se, geom="pointrange") +
