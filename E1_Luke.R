@@ -6,6 +6,8 @@ library(lme4)
 library(ggplot2)
 library(lmerTest)
 library(modelr)
+library(sjPlot)
+library(ggpubr)
 
 #### ### get the data --------------------------------------------
 
@@ -167,12 +169,16 @@ all.data <- merge(all.data, hist, all=TRUE)
 all.data$dpi.diss <- factor(all.data$dpi.diss, levels = c("3dpi", "5dpi", "7dpi", "9dpi", "11dpi"))
 
 # test strain effect on IFNy CEWE and MES + drop levels to remove EI70
+
+
 IFNy.MES <- dplyr::select(all.data, EH_ID, dpi.diss, inf.strain, IFNy_MES)
 IFNy.MES <- dplyr::distinct(IFNy.MES)
 IFNy.MES <- na.omit(IFNy.MES)
 IFNy.MES <- droplevels(IFNy.MES, exclude = "EI70")
+IFNy.MES$inf.strain = factor(IFNy.MES$inf.strain, levels(IFNy.MES$inf.strain)[c(4,1:3)])
 modIFNyMES <- lmer(IFNy_MES~inf.strain + (1|dpi.diss), data = IFNy.MES)
 summary(modIFNyMES)
+rand(modIFNyMES)
 VarCorr(modIFNyMES)
 MESgrid <- IFNy.MES %>% data_grid(inf.strain, dpi.diss, IFNy_MES)
 MESgrid <- MESgrid %>% 
@@ -188,8 +194,10 @@ IFNy.SPL <- dplyr::select(all.data, EH_ID, dpi.diss, inf.strain, IFNy_SPL)
 IFNy.SPL <- dplyr::distinct(IFNy.SPL)
 IFNy.SPL <- na.omit(IFNy.SPL)
 IFNy.SPL <- droplevels(IFNy.SPL, exclude = "EI70")
+IFNy.SPL$inf.strain = factor(IFNy.SPL$inf.strain, levels(IFNy.SPL$inf.strain)[c(4,1:3)])
 modIFNySPL <- lmer(IFNy_SPL~inf.strain + (1|dpi.diss), data = IFNy.SPL)
 summary(modIFNySPL)
+rand(modIFNySPL)
 VarCorr(modIFNySPL)
 SPLgrid <- IFNy.SPL %>% data_grid(inf.strain, dpi.diss, IFNy_SPL)
 SPLgrid <- SPLgrid %>%
@@ -202,6 +210,33 @@ ggplot(fortify(modIFNySPL), aes(dpi.diss, IFNy_SPL, color = inf.strain, group = 
 tab_model(modIFNyMES,modIFNySPL, 
           file="IFNtable_VS_Eflab(itercept).html",
           dv.labels=c("MES", "SPL"))
+
+ggscatter(subset(all.data, !is.na(all.data$PH.delta)), x = "PH.delta", y = "IFNy_MES", add = "reg.line", color = "inf.strain") +
+  facet_grid(~inf.strain) +
+  labs(y = "IFN-y (pg/mL)", x = "deltaCT = Mouse - Eimeria", color = "infection status", fill = "infection status") +
+  theme(axis.text=element_text(size=12, face = "bold"),
+        title = element_text(size = 16, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        strip.text.y = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold")) +
+  ylim(0, 510) +
+  ggtitle("infection intensity effect on IFN-y abundance")
+
+ggscatter(subset(all.data, !is.na(all.data$PH.delta)), x = "PH.delta", y = "IFNy_SPL", add = "reg.line", color = "inf.strain") +
+  facet_grid(~inf.strain) +
+  labs(y = "IFN-y (pg/mL)", x = "deltaCT = Mouse - Eimeria", color = "infection status", fill = "infection status") +
+  theme(axis.text=element_text(size=12, face = "bold"),
+        title = element_text(size = 16, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        strip.text.y = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold")) +
+  ylim(0, 510) +
+  ggtitle("infection intensity effect on IFN-y abundance")
+
 # no differences
 
 # sum of oocysts from dpi 4-9 vs IFN
@@ -285,6 +320,18 @@ CytokinesSP <- ggplot(subset(M, nchar(M$Gene)>2), aes(dpi, NE, color=inf.strain)
   scale_y_continuous("normalized mRNA expression")+
   theme_bw()
 
+ggscatter(data = M, x = "NE", y = "IFNy_MES", add = "reg.line", color = "inf.strain") +
+  facet_grid(Gene_f~inf.strain, scales = "free") +
+  labs(y = "IFN-y (pg/mL)", x = "deltaCT = Mouse - Eimeria", color = "infection status", fill = "infection status") +
+  theme(axis.text=element_text(size=12, face = "bold"),
+        title = element_text(size = 16, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        strip.text.y = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold")) +
+  ylim(0, 510) +
+  ggtitle("infection intensity effect on IFN-y abundance")
 
 ## Contrasting against Eflab
 modCXCL9 <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"CXCL9"))
@@ -316,3 +363,28 @@ tab_model(modCXCL9, modIL10, modIL12, modIL6,
           file="SPtable_VS_Eflab(itercept).html",
           dv.labels=c("CXCL9", "IL10", "IL12", "IL6",
                       "IFNG", "STAT6", "TGFB"))
+
+# contrast against uninfected
+M$inf.strain = factor(M$inf.strain, levels(M$inf.strain)[c(4,1:3)])
+
+modCXCL9.cu <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"CXCL9"))
+summary(modCXCL9.cu)
+
+modIL10.cu <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL-10"))
+summary(modIL10.cu)
+
+modIL12.cu <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL-12"))
+summary(modIL12.cu)
+
+modIL6.cu <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL-6"))
+summary(modIL6.cu)
+
+modIFNG.cu <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IFN-G"))
+summary(modIFNG.cu)
+
+modSTAT6.cu <- lmer(NE~inf.strain  +(1|dpi.diss), data=subset(M, M$Gene%in%"STAT6"))
+summary(modSTAT6.cu)
+
+modTGFB.cu <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"TGF-B"))
+summary(modTGFB.cu)
+
