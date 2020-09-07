@@ -173,7 +173,9 @@ IFNy.MES <- na.omit(IFNy.MES)
 modIFNyMES <- lmer(IFNy_MES~inf.strain + (1|dpi.diss), data = IFNy.MES)
 summary(modIFNyMES)
 VarCorr(modIFNyMES)
-MESgrid <- IFNy.MES %>% data_grid(inf.strain)
+IFNy.MES <- droplevels(IFNy.MES)
+
+MESgrid <- IFNy.MES %>% data_grid(inf.strain, dpi.diss, IFNy_MES)
 MESgrid <- MESgrid %>% 
   add_predictions(modIFNyMES) 
 
@@ -198,5 +200,21 @@ ggplot(fortify(modIFNySPL), aes(dpi.diss, IFNy_SPL, color = inf.strain, group = 
 # sum of oocysts from dpi 4-9 vs IFN
 oocysts <- dplyr::select(all.data, EH_ID, Total.oocysts.g, dpi_count, dpi.diss, IFNy_MES, IFNy_SPL)
 
+# graph for presentation
+ggplot(data = IFNy.MES, aes(x = dpi.diss, y = IFNy_MES, group = inf.strain, color = inf.strain)) +
+  geom_point() +
+  geom_smooth(method = "loess", se = F) +
+  facet_grid(~inf.strain)
 
+ggplot(data = IFNy.SPL, aes(x = dpi.diss, y = IFNy_SPL, group = inf.strain, color = inf.strain)) +
+  geom_point() +
+  geom_smooth(method = "loess", se = F) +
+  facet_grid(~inf.strain)
 
+ggplot(data = all.data, aes(x = PH.delta, y = IFNy_MES, color = inf.strain, group = inf.strain)) +
+  geom_point() +
+  facet_grid(~inf.strain)
+
+ggplot(data = all.data, aes(x = PH.delta, y = IFNy_SPL, color = inf.strain, group = inf.strain)) +
+  geom_point() +
+  facet_grid(~inf.strain)
