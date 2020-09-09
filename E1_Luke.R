@@ -180,11 +180,7 @@ modIFNyMES <- lmer(IFNy_MES~inf.strain + (1|dpi.diss), data = IFNy.MES)
 summary(modIFNyMES)
 rand(modIFNyMES)
 VarCorr(modIFNyMES)
-<<<<<<< HEAD
-IFNy.MES <- droplevels(IFNy.MES)
 
-=======
->>>>>>> db820131021e36210046a93cf6143c2e5e8dcb3e
 MESgrid <- IFNy.MES %>% data_grid(inf.strain, dpi.diss, IFNy_MES)
 MESgrid <- MESgrid %>% 
   add_predictions(modIFNyMES) 
@@ -258,11 +254,10 @@ ggplot(data = IFNy.SPL, aes(x = dpi.diss, y = IFNy_SPL, group = inf.strain, colo
   geom_smooth(method = "loess", se = F) +
   facet_grid(~inf.strain)
 
-<<<<<<< HEAD
 ggplot(data = all.data, aes(x = PH.delta, y = IFNy_MES, color = inf.strain, group = inf.strain)) +
   geom_point() +
   facet_grid(~inf.strain)
-=======
+
 ############ - Gene expression data (spleen) -----------------------
 #load data from raw GitHub
 CXCL9.Surl <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_CXCL9.csv"
@@ -407,7 +402,6 @@ summary(modSTAT6.cu)
 
 modTGFB.cu <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"TGF-B"))
 summary(modTGFB.cu)
->>>>>>> db820131021e36210046a93cf6143c2e5e8dcb3e
 
 ggplot(data = all.data, aes(x = PH.delta, y = IFNy_SPL, color = inf.strain, group = inf.strain)) +
   geom_point() +
