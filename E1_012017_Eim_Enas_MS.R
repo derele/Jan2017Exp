@@ -19,15 +19,15 @@ library(reshape)
 #### ### get the data --------------------------------------------
 
 ## for control: general experimental setup -------------------
-stabURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Experiment_Table_raw_NMRI_Jan2017.csv"
-stab <- read.csv(text = getURL(stabURL))
+stab <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/Experiment_Table_raw_NMRI_Jan2017.csv")
+# stab <- read.csv(text = getURL(stabURL))
 stab <- subset(stab, !stab$inf.strain%in%"EI70", drop = TRUE)
 stab$inf.strain <- as.factor(as.character(stab$inf.strain))
 names(stab)[names(stab)%in%"mouseID"] <- "EH_ID"
 
 ### spleen weight
-spleenURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Spleen_weight.csv"
-spleen <- read.csv(text = getURL(spleenURL))
+spleen <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/Spleen_weight.csv")
+# spleen <- read.csv(text = getURL(spleenURL))
 names(spleen)[names(spleen)%in%"mouseID"] <- "EH_ID"
 spleen <- merge(spleen, stab)
 spleen$dpi <- as.numeric(gsub("dpi|dip", "", spleen$dpi.diss))
@@ -46,8 +46,8 @@ qPCR.plot <- ggplot(spleen, aes(dpi, spleenWeight, color=inf.strain)) +
 ## -> no signal in that little data
 
 ## weight --------------------------------------------------------
-weightURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Weight_Expe_Jan_2017.csv"
-weight <- read.csv(text = getURL(weightURL))
+weight <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/Weight_Expe_Jan_2017.csv")
+# weight <- read.csv(text = getURL(weightURL))
 
 ## weight was only obtained for mice dissected at or after 7dpi
 ## correcting the names
@@ -85,8 +85,8 @@ weight.long$dpi_of_perc <- as.numeric(gsub("Day\\.?(\\d+)_\\.p", "\\1",
 weight.long <- weight.long[, !grepl("^Day.", names(weight.long)) ]
 
 ### oocysts ---------------------------------------------------------
-oocystsURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Clean_oocyst_data.csv"
-oocysts <- read.csv(text = getURL(oocystsURL))
+oocysts <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/Clean_oocyst_data.csv")
+# oocysts <- read.csv(text = getURL(oocystsURL))
 
 #make total oocysts per g out of NB counts
 oocysts$Total.oocysts.g <- ((oocysts$Count..8.Neubauer.squares. / 8)*
@@ -121,8 +121,8 @@ levels(all.data$inf.strain) <- c("EfalL", "EfalW", "EferW", "Uninf", "EI70")
 #set levels for infection strains
 levels(stab$inf.strain) <- c("EfalL", "EfalW", "EferW", "Uninf")
 #load in data
-RtissueURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Eimeria-NMRI_Relative%20quantification_clean.csv"
-Rtissue <- read.csv(text = getURL(RtissueURL))
+Rtissue <- read.scv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/Eimeria-NMRI_Relative%20quantification_clean.csv")
+# Rtissue <- read.csv(text = getURL(RtissueURL))
 
 ## only the means
 RtMeans <- Rtissue[seq(1, nrow(Rtissue), by=2),
@@ -164,8 +164,8 @@ max(all.data[all.data$inf.strain%in%"EferW", "PH.delta"], na.rm=TRUE)
 
 ### Histology ----------------------------------------------
 
-histURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Histo.csv"
-hist <- read.csv(text = getURL(histURL))
+hist <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/Histo.csv")
+# hist <- read.csv(text = getURL(histURL))
 #add means and sums columns
 hist$mMLS <- rowMeans(hist[, grepl("^MLS", colnames(hist))])
 hist$sMLS <- rowSums(hist[, grepl("^MLS", colnames(hist))])
@@ -395,29 +395,29 @@ wilcox_test(Total.oocysts.g~as.factor(inf.strain),
 
 ############ - Gene expression data (spleen) -----------------------
 #load data from raw GitHub
-CXCL9.Surl <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_CXCL9.csv"
-CXCL9.S <- read.csv(text = getURL(CXCL9.Surl), sep = ",")
+CXCL9.S <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_CXCL9.csv")
+# CXCL9.S <- read.csv(text = getURL(CXCL9.Surl), sep = ",")
 
-IL10.Surl <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_IL10.csv"
-IL10.S <- read.csv(text = getURL(IL10.Surl), sep = ",")
+IL10.S <-  read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_IL10.csv")
+# IL10.S <- read.csv(text = getURL(IL10.Surl), sep = ",")
 
-IL12.Surl <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_IL12.csv"
-IL12.S <- read.csv(text = getURL(IL12.Surl), sep = ",")
+IL12.S <-  read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_IL12.csv")
+# IL12.S <- read.csv(text = getURL(IL12.Surl), sep = ",")
 
-IL6.Surl <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_IL6.csv"
-IL6.S <- read.csv(text = getURL(IL6.Surl), sep = ",")
+IL6.S <-  read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_IL6.csv")
+# IL6.S <- read.csv(text = getURL(IL6.Surl), sep = ",")
 
-IFNg.Surl <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_INFg.csv"
-IFNg.S <- read.csv(text = getURL(IFNg.Surl), sep = ",")
+IFNg.S <-  read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_INFg.csv")
+# IFNg.S <- read.csv(text = getURL(IFNg.Surl), sep = ",")
 
-STAT6.Surl <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_STAT6.csv"
-STAT6.S <- read.csv(text = getURL(STAT6.Surl), sep = ",")
+STAT6.S <-  read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_STAT6.csv")
+# STAT6.S <- read.csv(text = getURL(STAT6.Surl), sep = ",")
 
-TGFb.Surl <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_TGFb.csv"
-TGFb.S <- read.csv(text = getURL(TGFb.Surl), sep = ",")
+TGFb.S <-  read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_TGFb.csv")
+# TGFb.S <- read.csv(text = getURL(TGFb.Surl), sep = ",")
 
-TNFa.Surl <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_TNFa.csv"
-TNFa.S <- read.csv(text = getURL(TNFa.Surl), sep = ",")
+TNFa.S <-  read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_TNFa.csv")
+# TNFa.S <- read.csv(text = getURL(TNFa.Surl), sep = ",")
 
 GeMeans.l <- list(CXCL9.S, IL10.S, IL12.S, IL6.S, IFNg.S, STAT6.S, TGFb.S, TNFa.S)
 
@@ -463,7 +463,8 @@ pdf("figures/Cytokines.pdf", width=12, height=4)
 M$Gene_f = factor(M$Gene, levels=c('CXCL9','IL-6','IL-10','IL-12', "IFN-G", "TGF-B", "STAT6"))
 
 # plot Spleen
-CytokinesSP <- ggplot(subset(M, nchar(M$Gene)>2), aes(dpi, NE, color=inf.strain)) +
+# CytokinesSP <- 
+  ggplot(subset(M, nchar(M$Gene)>2), aes(dpi, NE, color=inf.strain)) +
   geom_jitter(width=0.2) +
   geom_smooth(se=FALSE) +
   scale_x_continuous(breaks=c(3, 5, 7, 9, 11),
@@ -472,7 +473,7 @@ CytokinesSP <- ggplot(subset(M, nchar(M$Gene)>2), aes(dpi, NE, color=inf.strain)
   scale_colour_brewer("infection\nisolate", palette = "Dark2") +
   scale_y_continuous("normalized mRNA expression")+
   theme_bw()
-dev.off()
+# dev.off()
 
 ## Contrasting against Eflab
 modCXCL9 <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"CXCL9"))

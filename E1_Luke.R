@@ -12,18 +12,17 @@ library(ggpubr)
 #### ### get the data --------------------------------------------
 
 ## for control: general experimental setup -------------------
-stabURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Experiment_Table_raw_NMRI_Jan2017.csv"
-stab <- read.csv(text = getURL(stabURL))
+stab <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/Experiment_Table_raw_NMRI_Jan2017.csv")
 stab <- subset(stab, !stab$inf.strain%in%"EI70", drop = TRUE)
 stab$inf.strain <- as.factor(as.character(stab$inf.strain))
 names(stab)[names(stab)%in%"mouseID"] <- "EH_ID"
 
 ### IFNy MES
-IFN_MES <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Jan2017Exp/master/E1_012017_Eim_MES_ELISA.csv"))
+IFN_MES <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/E1_012017_Eim_MES_ELISA.csv")
 IFN_MES$X <- NULL
 
 ### IFNy SPL
-IFN_SPL <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Jan2017Exp/master/E1_012017_Eim_SPL_ELISA.csv"))
+IFN_SPL <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/E1_012017_Eim_SPL_ELISA.csv")
 IFN_SPL$X <- NULL
 
 ### merge stab and IFN
@@ -31,15 +30,14 @@ IFN <- merge(IFN_MES, IFN_SPL, all = T)
 stab <- merge(stab, IFN, all = T)
 
 ### spleen weight
-spleenURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Spleen_weight.csv"
-spleen <- read.csv(text = getURL(spleenURL))
+spleen <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/Spleen_weight.csv")
+
 names(spleen)[names(spleen)%in%"mouseID"] <- "EH_ID"
 spleen <- merge(spleen, stab)
 spleen$dpi <- as.numeric(gsub("dpi|dip", "", spleen$dpi.diss))
 
 ## weight --------------------------------------------------------
-weightURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Weight_Expe_Jan_2017.csv"
-weight <- read.csv(text = getURL(weightURL))
+weight <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/Weight_Expe_Jan_2017.csv")
 
 ## weight was only obtained for mice dissected at or after 7dpi
 ## correcting the names
@@ -77,8 +75,8 @@ weight.long$dpi_of_perc <- as.numeric(gsub("Day\\.?(\\d+)_\\.p", "\\1",
 weight.long <- weight.long[, !grepl("^Day.", names(weight.long)) ]
 
 ### oocysts ---------------------------------------------------------
-oocystsURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Clean_oocyst_data.csv"
-oocysts <- read.csv(text = getURL(oocystsURL))
+oocysts <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/Clean_oocyst_data.csv")
+
 
 #make total oocysts per g out of NB counts
 oocysts$Total.oocysts.g <- ((oocysts$Count..8.Neubauer.squares. / 8)*
@@ -113,8 +111,7 @@ levels(all.data$inf.strain) <- c("EfalL", "EfalW", "EferW", "Uninf", "EI70")
 #set levels for infection strains
 levels(stab$inf.strain) <- c("EfalL", "EfalW", "EferW", "Uninf")
 #load in data
-RtissueURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Eimeria-NMRI_Relative%20quantification_clean.csv"
-Rtissue <- read.csv(text = getURL(RtissueURL))
+Rtissue <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/Eimeria-NMRI_Relative%20quantification_clean.csv")
 
 ## only the means
 RtMeans <- Rtissue[seq(1, nrow(Rtissue), by=2),
@@ -156,8 +153,7 @@ max(all.data[all.data$inf.strain%in%"EferW", "PH.delta"], na.rm=TRUE)
 
 ### Histology ----------------------------------------------
 
-histURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Histo.csv"
-hist <- read.csv(text = getURL(histURL))
+hist <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/Histo.csv")
 #add means and sums columns
 hist$mMLS <- rowMeans(hist[, grepl("^MLS", colnames(hist))])
 hist$sMLS <- rowSums(hist[, grepl("^MLS", colnames(hist))])

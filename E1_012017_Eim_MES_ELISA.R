@@ -7,8 +7,8 @@ library(reshape2)
 library(drc)
 library(data.table)
 
-E1_std <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Jan2017Exp/master/E1_012017_Eim_MES_ELISA1_std.csv"))
-E1_samples <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Jan2017Exp/master/E1_012017_Eim_MES_ELISA1_samples.csv"))
+E1_std <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/E1_012017_Eim_MES_ELISA1_std.csv")
+E1_samples <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/E1_012017_Eim_MES_ELISA1_samples.csv")
 
 model1<-drm(OD~Conc,
             fct=LL.4(names=c("Slope", "Lower", "Upper", "ED50")),
@@ -32,8 +32,8 @@ E1$OD <- NULL
 
 write.csv(E1, "./Jan2017Exp/E1_012017_Eim_MES_ELISA1.csv")
 
-E2_std <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Jan2017Exp/master/E1_012017_Eim_MES_ELISA2_std.csv"))
-E2_samples <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Jan2017Exp/master/E1_012017_Eim_MES_ELISA2_samples.csv"))
+E2_std <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/E1_012017_Eim_MES_ELISA2_std.csv")
+E2_samples <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/E1_012017_Eim_MES_ELISA2_samples.csv")
 
 model2<-drm(OD~Conc,
             fct=LL.4(names=c("Slope", "Lower", "Upper", "ED50")),
@@ -55,7 +55,7 @@ colnames(E2_samples)[1] <- "EH_ID"
 E2 <- merge(E2, E2_samples)
 E2$OD <- NULL
 
-E1 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Jan2017Exp/master/E1_012017_Eim_MES_ELISA1.csv"))
+E1 <- read.csv("https://raw.githubusercontent.com/derele/Jan2017Exp/master/E1_012017_Eim_MES_ELISA1.csv")
 E1$X <- NULL
 E <- rbind(E1, E2)
 
